@@ -7,3 +7,4 @@ with source as (
     from source
 )
 select * from renamed
+-- did something
