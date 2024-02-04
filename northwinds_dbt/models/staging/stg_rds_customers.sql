@@ -1,9 +1,18 @@
---import cte
-with source as ( 
-    select * from public.customers
-), renamed as (
-    select customer_id, country, split_part(contact_name, ' ', 1) as first,
-    split_part(contact_name, ' ', 2) as last
-    from source
+WITH customers as (
+  SELECT * FROM {{ source('rds', 'customers') }}
+), companies as (
+    select * from {{ ref('stg_rds_companies') }}
+),
+renamed as (
+    SELECT 
+    concat('rds-', customer_id) as customer_id, 
+    SPLIT_PART(contact_name, ' ', 1) as first_name,
+    SPLIT_PART(contact_name, ' ', -1) as last_name,
+    REPLACE(TRANSLATE(phone, '(,),-,.', ''), ' ', '') as updated_phone,
+    company_id
+    FROM customers 
+    join companies on customers.company_name = companies.name
 )
-select * from renamed
+SELECT * FROM renamed
+
+
