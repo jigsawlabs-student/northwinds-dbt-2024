@@ -8,7 +8,7 @@ renamed as (
     concat('rds-', customer_id) as customer_id, 
     SPLIT_PART(contact_name, ' ', 1) as first_name,
     SPLIT_PART(contact_name, ' ', -1) as last_name,
-    REPLACE(TRANSLATE(phone, '(,),-,.', ''), ' ', '') as updated_phone,
+    REPLACE(TRANSLATE(phone, '(,),-,.', ''), ' ', '') as phone,
     company_id
     FROM customers 
     join companies on customers.company_name = companies.name
