@@ -1,18 +1,19 @@
 {{ config(materialized='table') }}
 
-WITH source AS (
+WITH int_orders AS (
     SELECT * FROM {{ref('int_orders')}}
 ), 
-contacts AS (
+int_contacts AS (
     SELECT * FROM {{ref('int_contacts')}}
 ),
 final AS (
     SELECT 
-    s.order_pk, c.contact_pk, s.order_date, s.product_id, s.employee_id, s.quantity, s.discount, s.unit_price
-    FROM source s
-    JOIN contacts c
-        ON c.rds_contact_id = s.customer_id
-        OR c.hubspot_contact_id = s.customer_id
+    int_orders.order_pk, int_contacts.contact_pk, int_orders.order_date, int_orders.product_id,
+     int_orders.employee_id, int_orders.quantity, int_orders.discount, int_orders.unit_price
+    FROM int_orders
+    JOIN int_contacts
+        ON int_contacts.rds_contact_id = int_orders.customer_id
+        OR int_contacts.hubspot_contact_id = int_orders.customer_id
     ORDER BY order_date 
 )
 
